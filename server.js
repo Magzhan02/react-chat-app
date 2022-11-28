@@ -1,12 +1,55 @@
 const express = require('express');
-const http = require('http');
-
 const app = express();
-
+const http = require('http');
 const server = http.createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(server);
 
-app.get('/', (req, resp) => {
-  resp.send('HEllo');
+app.use(express.json());
+
+const rooms = new Map();
+
+app.get('/rooms/:id', (req, resp) => {
+  const { id: roomId } = req.params;
+  let roomInfo = null;
+
+  if (rooms.has(roomId)) {
+    roomInfo = {
+      users: [...rooms.get(roomId).get('users').values()],
+      messages: [...rooms.get(roomId).get('messages'), values()],
+    };
+  } else {
+    roomInfo = { users: [], messages: [] };
+  }
+
+  resp.json(roomInfo);
 });
 
-app.listen(4444);
+app.post('/rooms', (req, resp) => {
+  const { roomId } = req.body();
+
+  if (!rooms.has(roomId)) {
+    rooms.set(
+      roomId,
+
+      new Map([
+        ['users', new Map()],
+        ['messages', []],
+      ]),
+    );
+  }
+
+  resp.send();
+});
+
+io.on('connection', (socket) => {
+  console.log('user connected', socket.id);
+});
+
+server.listen(4444, (err) => {
+  if (err) {
+    throw Error(err);
+  }
+
+  console.log('Server started');
+});
