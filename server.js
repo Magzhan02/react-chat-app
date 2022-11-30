@@ -26,7 +26,7 @@ app.get('/rooms/:id', (req, resp) => {
 });
 
 app.post('/rooms', (req, resp) => {
-  const { roomId } = req.body();
+  const { roomId } = req.body;
 
   if (!rooms.has(roomId)) {
     rooms.set(
@@ -44,6 +44,13 @@ app.post('/rooms', (req, resp) => {
 
 io.on('connection', (socket) => {
   console.log('user connected', socket.id);
+  socket.on('ROOM:JOIN', ({ roomId, userName }) => {
+    socket.join(roomId);
+    rooms.get(roomId).get('users').set(socket.id, userName);
+
+    const users = [...rooms.get(roomId).get('users').values()];
+    socket.to(roomId).broadcast.emit('ROOM:SET_USERS', users);
+  });
 });
 
 server.listen(4444, (err) => {

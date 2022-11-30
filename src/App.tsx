@@ -1,11 +1,17 @@
 import React from 'react';
 
+import reducer from './reducer';
+
 import { JoinBlock } from './components';
 
-import io from 'socket.io-client';
-
 function App() {
-  const socket = io('http://localhost:4444');
+  const [state, dispatch] = React.useReducer(reducer, {
+    join: false,
+    roomId: null,
+    userName: null,
+    users: [],
+    messages: [],
+  });
 
   return (
     <div className="App">
