@@ -3,21 +3,26 @@ import axios from 'axios';
 
 import styles from './JoinBlock.module.scss';
 
-const JoinBlock = () => {
+import { SocketActionObj } from '../../types/reducerType';
+
+interface JoinBlockType {
+  setJoinData: (obj: SocketActionObj) => void;
+}
+
+const JoinBlock: React.FC<JoinBlockType> = ({ setJoinData }) => {
   const [roomId, setRoomId] = React.useState<string>('');
   const [userName, setUserName] = React.useState<string>('');
 
   const onSubmit = async () => {
     if (roomId && userName) {
-      await axios.post('/rooms', {
-        roomId,
-        userName,
-      });
-
       const obj = {
         roomId,
         userName,
       };
+
+      await axios.post('/rooms', obj);
+
+      setJoinData(obj);
     } else {
       console.log('error');
     }

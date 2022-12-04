@@ -1,10 +1,14 @@
 import React from 'react';
 
+import axios from 'axios';
+
+import socket from './socket';
+import { ActionType, SocketActionObj } from './types/reducerType';
 import reducer from './reducer';
 
-import { JoinBlock } from './components';
+import { JoinBlock, ChatBlock } from './components';
 
-function App() {
+const App = () => {
   const [state, dispatch] = React.useReducer(reducer, {
     join: false,
     roomId: null,
@@ -13,11 +17,50 @@ function App() {
     messages: [],
   });
 
+  const setJoinData = async (obj: SocketActionObj) => {
+    dispatch({
+      type: ActionType.JOIN,
+      payload: obj,
+    });
+    socket.emit('ROOM:JOIN', obj);
+
+    const { data } = await axios.get(`/rooms/${obj.roomId}`);
+    console.log(data);
+
+    dispatch({
+      type: ActionType.SET_DATA,
+      payload: data,
+    });
+  };
+
+  const setUsers = (users: any[]) => {
+    dispatch({
+      type: ActionType.SET_USERS,
+      payload: users,
+    });
+  };
+
+  const setMessages = (message: any[]) => {
+    dispatch({
+      type: ActionType.NEW_MESSAGE,
+      payload: message,
+    });
+  };
+
+  React.useEffect(() => {
+    socket.on('ROOM:SET_USERS', setUsers);
+    socket.on('ROOM:NEW_MESSAGE', setMessages);
+  }, []);
+
+  React.useEffect(() => {
+    console.log(state.join, state.userName, state.roomId, state.users);
+  }, [state.join]);
+
   return (
     <div className="App">
-      <JoinBlock />
+      {state.join ? <ChatBlock /> : <JoinBlock setJoinData={setJoinData} />}
     </div>
   );
-}
+};
 
 export default App;

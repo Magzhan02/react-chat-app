@@ -1,22 +1,4 @@
-export enum ActionType {
-  JOIN = 'JOIN',
-  SET_USERS = 'SET_USERS',
-  SET_DATA = 'SET_DATA',
-  NEW_MESSAGE = 'NEW_MESSAGE',
-}
-
-interface SocketAction {
-  type: ActionType;
-  payload: any;
-}
-
-interface SocketState {
-  join: boolean;
-  roomId: null | string;
-  userName: null | string;
-  users: any[];
-  messages: any[];
-}
+import { SocketState, SocketAction, ActionType } from '../types/reducerType';
 
 export default (state: SocketState, action: SocketAction) => {
   const { type, payload } = action;
@@ -31,14 +13,18 @@ export default (state: SocketState, action: SocketAction) => {
     case ActionType.NEW_MESSAGE:
       return {
         ...state,
+        messages: [...state.messages, action.payload],
       };
     case ActionType.SET_DATA:
       return {
         ...state,
+        users: payload.users,
+        messages: payload.messages,
       };
     case ActionType.SET_USERS:
       return {
         ...state,
+        users: payload,
       };
     default:
       return state;

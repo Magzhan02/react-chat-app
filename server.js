@@ -16,7 +16,7 @@ app.get('/rooms/:id', (req, resp) => {
   if (rooms.has(roomId)) {
     roomInfo = {
       users: [...rooms.get(roomId).get('users').values()],
-      messages: [...rooms.get(roomId).get('messages'), values()],
+      messages: [...rooms.get(roomId).get('messages').values()],
     };
   } else {
     roomInfo = { users: [], messages: [] };
@@ -49,7 +49,29 @@ io.on('connection', (socket) => {
     rooms.get(roomId).get('users').set(socket.id, userName);
 
     const users = [...rooms.get(roomId).get('users').values()];
-    socket.to(roomId).broadcast.emit('ROOM:SET_USERS', users);
+    socket.broadcast.to(roomId).emit('ROOM:SET_USERS', users);
+  });
+
+  socket.on('ROOM:NEW_MESSAGE', ({ roomId, userName, msg }) => {
+    const obj = {
+      roomId,
+      userName,
+      msg,
+    };
+
+    rooms.get(roomId).get('messages').push(obj);
+    socket.broadcast.to(roomId).emit('ROOM:NEW_MESSAGE', obj);
+  });
+
+  socket.on('disconnect', () => {
+    rooms.forEach((value, roomId) => {
+      if (value.get('users').delete(socket.id)) {
+        const users = [...value.get('users').values()];
+        socket.broadcast.to(roomId).emit('ROOM:SET_USERS', users);
+      }
+    });
+
+    console.log('connected users', socket.id);
   });
 });
 
