@@ -52,10 +52,6 @@ const App = () => {
     socket.on('ROOM:NEW_MESSAGE', setMessages);
   }, []);
 
-  React.useEffect(() => {
-    console.log(state.join, state.userName, state.roomId, state.users);
-  }, [state.join]);
-
   return (
     <div className="App">
       {state.join ? <ChatBlock /> : <JoinBlock setJoinData={setJoinData} />}
