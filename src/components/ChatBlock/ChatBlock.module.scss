@@ -66,8 +66,9 @@
             max-height: 79vh;
 
             .messages{
-                margin: 45px 0;
-                .message{
+
+                .message, .active{
+                    margin: 45px 0;
                     display: flex;
                     flex-direction: row;
                     position: relative;
@@ -80,11 +81,11 @@
                     }
 
                     span{
-                        opacity: 0.5;
+                        opacity: 1;
                         font-size: 14px;
                         position: absolute;
                         top: -20px;
-                        left: -10px;
+                        left: 7.5px;
                     }
 
                     p{  
@@ -99,7 +100,26 @@
                        
                     }
               }
+
+              .active{
+                flex-direction: row-reverse;
+
+                span{
+                    opacity: 0.5;
+                    font-size: 14px;
+                    position: absolute;
+                    top: -20px;
+                    left: 696px;
+                }
+
+                p{
+                    background:#78e08f;
+                    margin-right: 7px;
+                }
             }
+        }
+
+            
            
         }
         form {
@@ -108,13 +128,40 @@
             justify-content: center;
             align-items: center;
             padding: 25px;
-            background: rgba($color: #000000, $alpha: .3);
+            background: rgba($color: #000000, $alpha: .1);
 
             .control{
                 width: 100%;
                 margin-bottom: 10px;
-              }
+                border: none;
+                border-radius: 15px 0px 0px 15px;
+                padding: 10px;
+                background: rgba($color: #000000, $alpha: .3);
+                color:#fff;
+                font-size: 16px;
 
+                &:focus { 
+                    outline: none !important;
+                }
+
+            }
+
+            button{
+                height: 77px;
+                width: 55px;
+                margin-bottom: 10px;
+                background: rgba($color: #000000, $alpha: .3);
+                border: none;
+                border-left: 1px solid rgba($color: #000000, $alpha: .3);
+                border-radius:0px 15px 15px 0px;
+                cursor: pointer;
+
+                img{
+                    width:25px;
+                    height: 25px;
+                }
+
+            }
         }
     }
 }

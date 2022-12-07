@@ -19,3 +19,8 @@ export interface SocketState {
 }
 
 export type SocketActionObj = Omit<SocketState, 'join' | 'messages' | 'users'>;
+
+export type MessageType = {
+  userName: string | null;
+  text: string;
+};
